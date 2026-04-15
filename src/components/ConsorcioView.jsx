@@ -25,7 +25,7 @@ function ConsorcioView({ db, handlers }) {
           <span className="text-sm font-medium">Simulador de Enlace (Maqueta)</span>
         </div>
         <select 
-          className="bg-slate-700 text-white border border-slate-600 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2"
+          className="bg-slate-700 text-white border border-slate-600 text-sm rounded-md focus:ring-orange-500 focus:border-orange-500 block p-2"
           value={enlaceSimuladoId}
           onChange={(e) => setEnlaceSimuladoId(e.target.value)}
         >
@@ -47,10 +47,10 @@ function ConsorcioView({ db, handlers }) {
         <div className="bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden animate-fade-in-up">
           
           {/* Cabecera del Documento */}
-          <div className="bg-blue-600 px-6 py-8 text-white text-center">
-            <ShieldCheck className="mx-auto h-16 w-16 mb-4 text-blue-200" />
+          <div className="bg-orange-600 px-6 py-8 text-white text-center">
+            <ShieldCheck className="mx-auto h-16 w-16 mb-4 text-orange-200" />
             <h1 className="text-2xl font-bold tracking-tight">Autorización de Llavero Digital</h1>
-            <p className="text-blue-100 mt-2">Revisión de solicitud para acceso a las instalaciones</p>
+            <p className="text-orange-100 mt-2">Revisión de solicitud para acceso a las instalaciones</p>
           </div>
 
           <div className="p-6 sm:p-8 space-y-8">
@@ -60,7 +60,7 @@ function ConsorcioView({ db, handlers }) {
               <span className="text-sm font-bold text-slate-500 uppercase tracking-wider">Estado de Solicitud</span>
               <span className={`inline-flex items-center px-4 py-1.5 rounded-full text-sm font-bold ${
                 solicitud.estado === 'Pendiente' ? 'bg-yellow-100 text-yellow-800' : 
-                solicitud.estado === 'Aprobada' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
+                solicitud.estado === 'Aprobada' ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'
               }`}>
                 {solicitud.estado === 'Pendiente' && <Clock className="w-4 h-4 mr-2"/>}
                 {solicitud.estado === 'Aprobada' && <CheckCircle className="w-4 h-4 mr-2"/>}
@@ -72,7 +72,7 @@ function ConsorcioView({ db, handlers }) {
               
               {/* Datos del Edificio / Ubicación */}
               <div className="space-y-4">
-                <div className="flex items-center text-blue-600 mb-2 border-b border-slate-100 pb-2">
+                <div className="flex items-center text-orange-600 mb-2 border-b border-slate-100 pb-2">
                   <Building2 className="w-5 h-5 mr-2" />
                   <h3 className="font-bold text-lg">Inmueble</h3>
                 </div>
@@ -86,14 +86,14 @@ function ConsorcioView({ db, handlers }) {
 
               {/* Datos del Solicitante */}
               <div className="space-y-4">
-                <div className="flex items-center text-blue-600 mb-2 border-b border-slate-100 pb-2">
+                <div className="flex items-center text-orange-600 mb-2 border-b border-slate-100 pb-2">
                   <User className="w-5 h-5 mr-2" />
                   <h3 className="font-bold text-lg">Solicitante</h3>
                 </div>
                 <div className="space-y-2 text-sm text-slate-700">
                   <p><span className="font-semibold text-slate-500">Nombre:</span> <span className="font-medium text-slate-900">{solicitud.nombreCompleto}</span></p>
                   <p><span className="font-semibold text-slate-500">DNI:</span> {solicitud.dni}</p>
-                  <p><span className="font-semibold text-slate-500">Email:</span> <a href={`mailto:${solicitud.email}`} className="text-blue-600 hover:underline">{solicitud.email || 'No proporcionado'}</a></p>
+                  <p><span className="font-semibold text-slate-500">Email:</span> <a href={`mailto:${solicitud.email}`} className="text-orange-600 hover:underline">{solicitud.email || 'No proporcionado'}</a></p>
                   <p><span className="font-semibold text-slate-500">Teléfono:</span> {solicitud.telefono || 'No proporcionado'}</p>
                   <p><span className="font-semibold text-slate-500">Rol:</span> {solicitud.tipoUsuario || 'No especificado'}</p>
                 </div>
@@ -102,7 +102,7 @@ function ConsorcioView({ db, handlers }) {
 
             {/* Detalles del Pedido */}
             <div className="space-y-4 pt-4 border-t border-slate-100">
-              <div className="flex items-center text-blue-600 mb-2 border-b border-slate-100 pb-2">
+              <div className="flex items-center text-orange-600 mb-2 border-b border-slate-100 pb-2">
                 <KeyRound className="w-5 h-5 mr-2" />
                 <h3 className="font-bold text-lg">Detalles del Pedido</h3>
               </div>

@@ -56,10 +56,10 @@ function PublicView({ db, handlers }) {
   return (
     <div className="flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-slate-50 min-h-screen">
       <div className="text-center mb-10">
-        <Key className="mx-auto h-16 w-16 text-blue-600 mb-4" />
+        <Key className="mx-auto h-16 w-16 text-orange-600 mb-4" />
         <h1 className="text-4xl tracking-tight font-extrabold text-slate-900 sm:text-5xl md:text-6xl">
           <span className="block">Bienvenido a</span>
-          <span className="block text-blue-600">Gestión INTEK</span>
+          <span className="block text-orange-600">Gestión INTEK</span>
         </h1>
         <p className="mt-3 max-w-md mx-auto text-base text-slate-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
           Solicita tu llavero digital de manera rápida y segura para tu edificio.
@@ -80,7 +80,7 @@ function PublicView({ db, handlers }) {
              </p>
              <button 
                onClick={resetForm}
-               className="w-full sm:w-auto inline-flex justify-center py-3 px-6 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+               className="w-full sm:w-auto inline-flex justify-center py-3 px-6 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
              >
                Solicitar otro llavero
              </button>
@@ -95,7 +95,7 @@ function PublicView({ db, handlers }) {
                 <select
                   name="edificioId"
                   required
-                  className="block w-full pl-3 pr-10 py-2.5 text-base border-slate-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md border bg-white"
+                  className="block w-full pl-3 pr-10 py-2.5 text-base border-slate-300 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm rounded-md border bg-white"
                   value={form.edificioId}
                   onChange={handleChange}
                 >
@@ -113,7 +113,7 @@ function PublicView({ db, handlers }) {
                 <select
                   name="tipoUsuario"
                   required
-                  className="block w-full pl-3 pr-10 py-2.5 text-base border-slate-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md border bg-white"
+                  className="block w-full pl-3 pr-10 py-2.5 text-base border-slate-300 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm rounded-md border bg-white"
                   value={form.tipoUsuario}
                   onChange={handleChange}
                 >
@@ -135,7 +135,7 @@ function PublicView({ db, handlers }) {
                   type="text"
                   name="nombreCompleto"
                   required
-                  className="appearance-none block w-full px-3 py-2.5 border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2.5 border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
                   value={form.nombreCompleto}
                   onChange={handleChange}
                   placeholder="Ej. Juan Pérez"
@@ -148,7 +148,7 @@ function PublicView({ db, handlers }) {
                   type="text"
                   name="dni"
                   required
-                  className="appearance-none block w-full px-3 py-2.5 border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2.5 border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
                   value={form.dni}
                   onChange={handleChange}
                   placeholder="Sin puntos ni espacios"
@@ -161,7 +161,7 @@ function PublicView({ db, handlers }) {
                   type="email"
                   name="email"
                   required
-                  className="appearance-none block w-full px-3 py-2.5 border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2.5 border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
                   value={form.email}
                   onChange={handleChange}
                   placeholder="correo@ejemplo.com"
@@ -174,7 +174,7 @@ function PublicView({ db, handlers }) {
                   type="tel"
                   name="telefono"
                   required
-                  className="appearance-none block w-full px-3 py-2.5 border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2.5 border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
                   value={form.telefono}
                   onChange={handleChange}
                   placeholder="Cód. Área + Número"
@@ -191,7 +191,7 @@ function PublicView({ db, handlers }) {
                 <input
                   type="text"
                   name="torre"
-                  className="appearance-none block w-full px-3 py-2.5 border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2.5 border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
                   value={form.torre}
                   onChange={handleChange}
                   placeholder="Ej. A"
@@ -203,7 +203,7 @@ function PublicView({ db, handlers }) {
                 <input
                   type="text"
                   name="piso"
-                  className="appearance-none block w-full px-3 py-2.5 border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2.5 border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
                   value={form.piso}
                   onChange={handleChange}
                   placeholder="Ej. 4"
@@ -216,7 +216,7 @@ function PublicView({ db, handlers }) {
                   type="text"
                   name="depto"
                   required
-                  className="appearance-none block w-full px-3 py-2.5 border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2.5 border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
                   value={form.depto}
                   onChange={handleChange}
                   placeholder="Ej. B"
@@ -233,7 +233,7 @@ function PublicView({ db, handlers }) {
                   name="cantidad"
                   min="1"
                   required
-                  className="appearance-none block w-full px-3 py-2.5 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2.5 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
                   value={form.cantidad}
                   onChange={handleChange}
                 />
@@ -244,7 +244,7 @@ function PublicView({ db, handlers }) {
                 <textarea
                   name="observacion"
                   rows="2"
-                  className="appearance-none block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
                   value={form.observacion}
                   onChange={handleChange}
                   placeholder="Algún detalle adicional..."
@@ -255,7 +255,7 @@ function PublicView({ db, handlers }) {
             <div className="pt-4">
               <button
                 type="submit"
-                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-colors"
               >
                 Solicitar Llavero
               </button>

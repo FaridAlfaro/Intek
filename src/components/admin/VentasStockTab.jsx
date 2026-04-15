@@ -78,7 +78,7 @@ function VentasStockTab({ db, handlers }) {
         {/* PANEL IZQUIERDO: Lista de Solicitudes */}
         <div className="lg:col-span-5 flex flex-col h-[500px]">
           <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2 mb-4">
-            <Clock className="w-5 h-5 text-blue-500" />
+            <Clock className="w-5 h-5 text-orange-500" />
             Solicitudes Pendientes de Entrega
           </h3>
           
@@ -90,7 +90,7 @@ function VentasStockTab({ db, handlers }) {
                   key={sol.id}
                   onClick={() => handleSelectSolicitud(sol)}
                   className={`p-4 rounded-xl border-2 transition-all relative overflow-hidden ${
-                    isSelected ? 'border-blue-500 bg-blue-50 shadow-md' : 
+                    isSelected ? 'border-orange-500 bg-orange-50 shadow-md' : 
                     sol.estado === 'Aprobada' ? 'border-slate-200 bg-white hover:border-green-300 cursor-pointer' : 'opacity-60 grayscale cursor-not-allowed bg-slate-50 border-transparent'
                   }`}
                 >
@@ -106,7 +106,7 @@ function VentasStockTab({ db, handlers }) {
                       {sol.estado}
                     </span>
                   </div>
-                  {isSelected && <ArrowRight className="absolute right-3 bottom-3 w-5 h-5 text-blue-500 animate-pulse" />}
+                  {isSelected && <ArrowRight className="absolute right-3 bottom-3 w-5 h-5 text-orange-500 animate-pulse" />}
                 </div>
               );
             })}
@@ -121,10 +121,10 @@ function VentasStockTab({ db, handlers }) {
               <p className="font-medium text-lg text-slate-500">Seleccione una solicitud <span className="text-green-600 font-bold">APROBADA</span><br/>para efectuar la entrega y cobro.</p>
             </div>
           ) : (
-            <div className="bg-white rounded-2xl shadow-xl border border-blue-100 overflow-hidden animate-fade-in-right">
-              <div className="bg-blue-600 p-6 text-white">
+            <div className="bg-white rounded-2xl shadow-xl border border-orange-100 overflow-hidden animate-fade-in-right">
+              <div className="bg-orange-600 p-6 text-white">
                 <h3 className="text-xl font-bold">Procesar Entrega</h3>
-                <p className="text-blue-100 text-sm mt-1">
+                <p className="text-orange-100 text-sm mt-1">
                   Entregando a: <strong>{selectedSol.nombreCompleto}</strong> (DNI: {selectedSol.dni})<br/>
                   Destino: {selectedSol.edificioNombre} - {selectedSol.piso}{selectedSol.depto}
                 </p>
@@ -145,7 +145,7 @@ function VentasStockTab({ db, handlers }) {
                           type="button"
                           onClick={() => setVentaForm({...ventaForm, llaveroId: ll.codigoUnico})}
                           className={`px-3 py-2 rounded-lg text-xs font-bold border-2 transition-all ${
-                            ventaForm.llaveroId === ll.codigoUnico ? 'bg-blue-600 border-blue-600 text-white' : 'bg-white border-slate-200 text-slate-600 hover:border-blue-400'
+                            ventaForm.llaveroId === ll.codigoUnico ? 'bg-orange-600 border-orange-600 text-white' : 'bg-white border-slate-200 text-slate-600 hover:border-orange-400'
                           }`}
                         >
                           #{ll.codigoUnico}
@@ -170,7 +170,7 @@ function VentasStockTab({ db, handlers }) {
                         <input 
                           required
                           type="text"
-                          className="w-full pl-9 p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono focus:ring-2 focus:ring-blue-500 outline-none transition-colors focus:bg-white"
+                          className="w-full pl-9 p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono focus:ring-2 focus:ring-orange-500 outline-none transition-colors focus:bg-white"
                           value={ventaForm.llaveroId}
                           onChange={e => setVentaForm({...ventaForm, llaveroId: e.target.value})}
                           placeholder="Escanear o elegir arriba..."
@@ -248,7 +248,7 @@ function VentasStockTab({ db, handlers }) {
                         year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
                       })}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-mono font-bold text-blue-600">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-mono font-bold text-orange-600">
                       #{venta.llaveroId}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">

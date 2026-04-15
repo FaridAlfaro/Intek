@@ -20,7 +20,17 @@ function App() {
       observaciones: 'Los ascensores de servicio están al final del pasillo B.',
       adminNombre: 'Administración Global S.A.',
       adminEmail: 'contacto@adminglobal.com'
-    }
+    },
+    { id: 2, nombre: 'Edificio Las Heras', direccion: 'Las Heras 2300', puertas: 1, fechaBaterias: '2025-05-15', consorcioId: 101, lectores: 2, anticlon: false, observaciones: '', adminNombre: 'Administración Global S.A.', adminEmail: 'contacto@adminglobal.com' },
+    { id: 3, nombre: 'Condominio del Sol', direccion: 'Soler 4500', puertas: 3, fechaBaterias: '2026-06-20', consorcioId: 102, lectores: 6, anticlon: true, observaciones: 'Requiere llave especial para terraza', adminNombre: 'Consorcios VIP', adminEmail: 'vip@consorcios.com' },
+    { id: 4, nombre: 'Torre Madero', direccion: 'Alicia Moreau 500', puertas: 4, fechaBaterias: '2026-11-10', consorcioId: 103, lectores: 8, anticlon: true, observaciones: '', adminNombre: 'Madero Admin', adminEmail: 'info@maderoadmin.com' },
+    { id: 5, nombre: 'Plaza San Martin', direccion: 'Florida 1000', puertas: 1, fechaBaterias: '2027-01-30', consorcioId: 104, lectores: 2, anticlon: true, observaciones: 'Edificio histórico', adminNombre: 'Centro S.A.', adminEmail: 'centro@admsa.com.ar' },
+    { id: 6, nombre: 'Residencias Belgrano', direccion: 'Juramento 2100', puertas: 2, fechaBaterias: '2026-07-05', consorcioId: 105, lectores: 4, anticlon: false, observaciones: '', adminNombre: 'Belgrano Gestiones', adminEmail: 'gestiones@belgrano.com' },
+    { id: 7, nombre: 'Edificio Pacifico', direccion: 'Santa Fe 4300', puertas: 1, fechaBaterias: '2027-03-12', consorcioId: 101, lectores: 2, anticlon: true, observaciones: 'Puerta de servicio averiada', adminNombre: 'Administración Global S.A.', adminEmail: 'contacto@adminglobal.com' },
+    { id: 8, nombre: 'Torres Polo', direccion: 'Báez 300', puertas: 5, fechaBaterias: '2026-12-01', consorcioId: 102, lectores: 10, anticlon: true, observaciones: '', adminNombre: 'Consorcios VIP', adminEmail: 'vip@consorcios.com' },
+    { id: 9, nombre: 'Edificio La Costa', direccion: 'Costanera 200', puertas: 2, fechaBaterias: '2026-08-22', consorcioId: 101, lectores: 4, anticlon: true, observaciones: 'Cuidado con filtraciones de agua en PB', adminNombre: 'Administración Global S.A.', adminEmail: 'contacto@adminglobal.com' },
+    { id: 10, nombre: 'Altos de Nuñez', direccion: 'Cabildo 4000', puertas: 1, fechaBaterias: '2026-09-10', consorcioId: 106, lectores: 2, anticlon: false, observaciones: '', adminNombre: 'Nuñez Propiedades', adminEmail: 'admin@nunez.com' },
+    { id: 11, nombre: 'Complejo Abasto', direccion: 'Corrientes 3200', puertas: 3, fechaBaterias: '2027-02-14', consorcioId: 107, lectores: 6, anticlon: true, observaciones: '', adminNombre: 'Abasto Mgmt', adminEmail: 'mgmt@abasto.com' }
   ]);
 
   const [consorcios, setConsorcios] = useState([
@@ -28,8 +38,15 @@ function App() {
   ]);
 
   const [llaveros, setLlaveros] = useState([
-    { codigoUnico: '7791234567890', edificioId: 1, estado: 'En Stock' }, // Código de barras simulado
-    { codigoUnico: '7791234567891', edificioId: 1, estado: 'En Stock' }
+    { codigoUnico: '7791234567890', edificioId: 1, estado: 'En Stock' },
+    { codigoUnico: '7791234567891', edificioId: 1, estado: 'En Stock' },
+    { codigoUnico: '7791234567892', edificioId: 2, estado: 'En Stock' },
+    { codigoUnico: '7791234567893', edificioId: 3, estado: 'En Stock' },
+    { codigoUnico: '7791234567894', edificioId: 4, estado: 'En Stock' },
+    { codigoUnico: '7791234567895', edificioId: 5, estado: 'En Stock' },
+    { codigoUnico: '7791234567896', edificioId: 6, estado: 'En Stock' },
+    { codigoUnico: '7791234567897', edificioId: 7, estado: 'En Stock' },
+    { codigoUnico: '7791234567898', edificioId: 8, estado: 'En Stock' }
   ]);
 
   const [solicitudes, setSolicitudes] = useState([
@@ -42,7 +59,12 @@ function App() {
       piso: '4',
       depto: 'B', 
       estado: 'Pendiente' 
-    }
+    },
+    { id: 1002, edificioId: 2, solicitante: 'Maria Gomez', nombreCompleto: 'Maria Gomez', dni: '40111222', piso: '1', depto: 'A', estado: 'Pendiente' },
+    { id: 1003, edificioId: 3, solicitante: 'Carlos Tevez', nombreCompleto: 'Carlos Tevez', dni: '28333444', piso: '7', depto: 'C', estado: 'Aprobada' },
+    { id: 1004, edificioId: 1, solicitante: 'Ana Lopez', nombreCompleto: 'Ana Lopez', dni: '32555666', piso: 'PB', depto: '2', estado: 'Aprobada' },
+    { id: 1005, edificioId: 4, solicitante: 'Luis Suarez', nombreCompleto: 'Luis Suarez', dni: '39777888', piso: '12', depto: 'F', estado: 'Aprobada' },
+    { id: 1006, edificioId: 5, solicitante: 'Sofia Martinez', nombreCompleto: 'Sofia Martinez', dni: '42999000', piso: '3', depto: 'A', estado: 'Pendiente' }
   ]);
 
   const [ventas, setVentas] = useState([]);
@@ -92,11 +114,20 @@ function App() {
     setVentas([...ventas, newVenta]);
   };
 
+  const handleAgregarStock = (edificioId, codigosArray) => {
+    const nuevosLlaveros = codigosArray.map((codigo) => ({
+      codigoUnico: codigo,
+      edificioId,
+      estado: 'En Stock'
+    }));
+    setLlaveros([...llaveros, ...nuevosLlaveros]);
+  };
+
   const dbWrapper = { edificios, consorcios, llaveros, solicitudes, ventas, servicioTecnico };
-  const handlers = { handleCreateSolicitud, handleCreateEdificio, handleCreateServicio, handleUpdateSolicitudEstado, handleGenerarVenta };
+  const handlers = { handleCreateSolicitud, handleCreateEdificio, handleCreateServicio, handleUpdateSolicitudEstado, handleGenerarVenta, handleAgregarStock };
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans text-slate-800">
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
       <nav className="bg-white shadow border-b border-slate-200">
   <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     {/* Agregamos flex-wrap y quitamos el alto fijo (h-16) para que pueda crecer hacia abajo */}
@@ -104,26 +135,26 @@ function App() {
       
       {/* Logo */}
       <div className="flex-shrink-0 flex items-center w-full sm:w-auto justify-center sm:justify-start">
-        <span className="text-2xl font-bold text-blue-600 tracking-tight">INTEK</span>
+        <span className="text-2xl font-bold text-orange-500 tracking-tight">INTEK</span>
       </div>
       
       {/* Botones: Quitamos 'hidden' y usamos flex-wrap con centrado en móviles */}
       <div className="flex flex-wrap justify-center w-full sm:w-auto gap-2 sm:gap-8">
         <button
           onClick={() => setCurrentView('public')}
-          className={`${currentView === 'public' ? 'border-blue-500 text-slate-900' : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700'} inline-flex items-center px-1 py-2 border-b-2 text-sm font-medium transition-colors`}
+          className={`${currentView === 'public' ? 'border-orange-500 text-orange-400' : 'border-transparent text-neutral-400 hover:border-neutral-600 hover:text-white'} inline-flex items-center px-1 py-2 border-b-2 text-sm font-medium transition-colors`}
         >
           Público
         </button>
         <button
           onClick={() => setCurrentView('consorcio')}
-          className={`${currentView === 'consorcio' ? 'border-blue-500 text-slate-900' : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700'} inline-flex items-center px-1 py-2 border-b-2 text-sm font-medium transition-colors`}
+          className={`${currentView === 'consorcio' ? 'border-orange-500 text-orange-400' : 'border-transparent text-neutral-400 hover:border-neutral-600 hover:text-white'} inline-flex items-center px-1 py-2 border-b-2 text-sm font-medium transition-colors`}
         >
           Admin Consorcio
         </button>
         <button
           onClick={() => setCurrentView('admin')}
-          className={`${currentView === 'admin' ? 'border-blue-500 text-slate-900' : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700'} inline-flex items-center px-1 py-2 border-b-2 text-sm font-medium transition-colors`}
+          className={`${currentView === 'admin' ? 'border-orange-500 text-orange-400' : 'border-transparent text-neutral-400 hover:border-neutral-600 hover:text-white'} inline-flex items-center px-1 py-2 border-b-2 text-sm font-medium transition-colors`}
         >
           Admin INTEK
         </button>

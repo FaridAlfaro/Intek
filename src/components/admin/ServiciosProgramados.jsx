@@ -86,12 +86,12 @@ function ServiciosProgramados({ db, handlers }) {
       {/* Cabecera */}
       <div className="flex flex-col sm:flex-row justify-between items-center bg-white p-4 rounded-lg shadow-sm border border-slate-200 gap-4">
         <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-          <Wrench className="w-6 h-6 text-blue-600" />
+          <Wrench className="w-6 h-6 text-orange-600" />
           Servicios Programados
         </h2>
         <button 
           onClick={() => setShowForm(!showForm)}
-          className="w-full sm:w-auto bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition font-medium shadow-sm"
+          className="w-full sm:w-auto bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition font-medium shadow-sm"
         >
           {showForm ? 'Cancelar' : '+ Programar Servicio'}
         </button>
@@ -106,7 +106,7 @@ function ServiciosProgramados({ db, handlers }) {
               <label className="block text-xs font-bold text-slate-500 mb-1">EDIFICIO</label>
               <select 
                 required 
-                className="w-full border border-slate-300 rounded-md p-2 text-sm bg-white focus:ring-blue-500 focus:border-blue-500"
+                className="w-full border border-slate-300 rounded-md p-2 text-sm bg-white focus:ring-orange-500 focus:border-orange-500"
                 value={form.edificioId}
                 onChange={e => setForm({...form, edificioId: e.target.value})}
               >
@@ -123,7 +123,7 @@ function ServiciosProgramados({ db, handlers }) {
                 required 
                 type="text"
                 placeholder="Ej. Reparación de lector puerta principal"
-                className="w-full border border-slate-300 rounded-md p-2 text-sm focus:ring-blue-500 focus:border-blue-500"
+                className="w-full border border-slate-300 rounded-md p-2 text-sm focus:ring-orange-500 focus:border-orange-500"
                 value={form.tipoServicio}
                 onChange={e => setForm({...form, tipoServicio: e.target.value})}
               />
@@ -134,7 +134,7 @@ function ServiciosProgramados({ db, handlers }) {
               <input 
                 required 
                 type="date"
-                className="w-full border border-slate-300 rounded-md p-2 text-sm focus:ring-blue-500 focus:border-blue-500"
+                className="w-full border border-slate-300 rounded-md p-2 text-sm focus:ring-orange-500 focus:border-orange-500"
                 value={form.fechaEjecucion}
                 onChange={e => setForm({...form, fechaEjecucion: e.target.value})}
               />
@@ -146,7 +146,7 @@ function ServiciosProgramados({ db, handlers }) {
                 required 
                 type="text"
                 placeholder="Ej. Roberto Sánchez"
-                className="w-full border border-slate-300 rounded-md p-2 text-sm focus:ring-blue-500 focus:border-blue-500"
+                className="w-full border border-slate-300 rounded-md p-2 text-sm focus:ring-orange-500 focus:border-orange-500"
                 value={form.tecnicoAsignado}
                 onChange={e => setForm({...form, tecnicoAsignado: e.target.value})}
               />

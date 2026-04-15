@@ -47,7 +47,7 @@ function ServicioTecnicoTab({ db, handlers }) {
               <label className="block text-sm font-medium text-slate-700 mb-1">Edificio</label>
               <select
                 required
-                className="w-full border border-slate-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full border border-slate-300 rounded-md p-2 focus:ring-orange-500 focus:border-orange-500"
                 value={form.edificioId}
                 onChange={(e) => setForm({...form, edificioId: e.target.value})}
               >
@@ -63,7 +63,7 @@ function ServicioTecnicoTab({ db, handlers }) {
               <input
                 type="number"
                 required
-                className="w-full border border-slate-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full border border-slate-300 rounded-md p-2 focus:ring-orange-500 focus:border-orange-500"
                 value={form.numPuerta}
                 onChange={(e) => setForm({...form, numPuerta: e.target.value})}
               />
@@ -75,7 +75,7 @@ function ServicioTecnicoTab({ db, handlers }) {
             <input
               type="text"
               required
-              className="w-full border border-slate-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full border border-slate-300 rounded-md p-2 focus:ring-orange-500 focus:border-orange-500"
               value={form.nombreTecnico}
               onChange={(e) => setForm({...form, nombreTecnico: e.target.value})}
             />
@@ -86,7 +86,7 @@ function ServicioTecnicoTab({ db, handlers }) {
             <textarea
               required
               rows={3}
-              className="w-full border border-slate-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full border border-slate-300 rounded-md p-2 focus:ring-orange-500 focus:border-orange-500"
               value={form.tarea}
               onChange={(e) => setForm({...form, tarea: e.target.value})}
             />
@@ -96,7 +96,7 @@ function ServicioTecnicoTab({ db, handlers }) {
             <label className="block text-sm font-medium text-slate-700 mb-1">Repuestos Utilizados</label>
             <input
               type="text"
-              className="w-full border border-slate-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full border border-slate-300 rounded-md p-2 focus:ring-orange-500 focus:border-orange-500"
               value={form.repuestos}
               placeholder="Opcional. Ej. 2x Baterías, 1x Sensor"
               onChange={(e) => setForm({...form, repuestos: e.target.value})}
@@ -106,7 +106,7 @@ function ServicioTecnicoTab({ db, handlers }) {
           <div className="pt-4 border-t border-slate-200">
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 transition"
+              className="w-full bg-orange-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-orange-700 transition"
             >
               Registrar Tarea
             </button>
@@ -127,7 +127,7 @@ function ServicioTecnicoTab({ db, handlers }) {
                   <div>
                     <h4 className="font-semibold text-slate-800 text-sm">{edificio?.direccion} <span className="text-slate-500 font-normal">| Puerta {srv.numPuerta}</span></h4>
                     <p className="text-sm text-slate-600 mt-1">{srv.tarea}</p>
-                    {srv.repuestos && <p className="text-xs text-blue-600 mt-2">📦 {srv.repuestos}</p>}
+                    {srv.repuestos && <p className="text-xs text-orange-600 mt-2">📦 {srv.repuestos}</p>}
                   </div>
                   <div className="text-right flex flex-col justify-between">
                     <span className="text-xs font-medium text-slate-500 bg-slate-200 px-2 py-1 rounded inline-block self-end">{srv.nombreTecnico}</span>
