@@ -1,128 +1,168 @@
 import React, { useState } from 'react';
+import { Search, Info, PackageOpen } from 'lucide-react';
 
 function EdificiosTab({ db, handlers }) {
   const [selectedEdificioId, setSelectedEdificioId] = useState(null);
   const [showForm, setShowForm] = useState(false);
-  
-  const [form, setForm] = useState({
-    direccion: '',
-    puertas: '',
-    fechaBaterias: '',
-    consorcioId: ''
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Lógica de filtrado
+  const edificiosFiltrados = db.edificios.filter(edificio => {
+    const busqueda = searchTerm.toLowerCase();
+    return (
+      edificio.nombre.toLowerCase().includes(busqueda) ||
+      edificio.direccion.toLowerCase().includes(busqueda)
+    );
   });
 
-  const handleCreate = (e) => {
-    e.preventDefault();
-    handlers.handleCreateEdificio({
-      direccion: form.direccion,
-      puertas: parseInt(form.puertas),
-      fechaBaterias: form.fechaBaterias,
-      consorcioId: parseInt(form.consorcioId)
-    });
-    setForm({ direccion: '', puertas: '', fechaBaterias: '', consorcioId: '' });
-    setShowForm(false);
-  };
-
   const selectedEdificio = db.edificios.find(e => e.id === selectedEdificioId);
-  const serviciosFiltrados = selectedEdificioId ? db.servicioTecnico.filter(s => s.edificioId === selectedEdificioId) : [];
+  const stockEdificio = selectedEdificio 
+    ? db.llaveros.filter(ll => ll.edificioId === selectedEdificio.id && ll.estado === 'En Stock')
+    : [];
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center bg-white p-4 rounded-lg shadow-sm">
+      {/* Cabecera y Botón Nuevo */}
+      <div className="flex flex-col sm:flex-row justify-between items-center bg-white p-4 rounded-lg shadow-sm border border-slate-200 gap-4">
         <h2 className="text-xl font-bold text-slate-800">Gestión de Edificios</h2>
         <button 
           onClick={() => setShowForm(!showForm)}
-          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
+          className="w-full sm:w-auto bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition font-medium shadow-sm"
         >
           {showForm ? 'Cancelar' : '+ Nuevo Edificio'}
         </button>
       </div>
 
-      {showForm && (
-        <form onSubmit={handleCreate} className="bg-white p-6 rounded-lg shadow-sm flex flex-wrap gap-4 items-end">
-          <div className="flex-1 min-w-[200px]">
-            <label className="block text-sm text-slate-600 mb-1">Dirección</label>
-            <input required className="w-full border p-2 rounded-md" value={form.direccion} onChange={e => setForm({...form, direccion: e.target.value})} />
+      {/* Buscador */}
+      <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Search className="h-5 w-5 text-slate-400" />
           </div>
-          <div className="w-24">
-            <label className="block text-sm text-slate-600 mb-1">Puertas</label>
-            <input required type="number" className="w-full border p-2 rounded-md" value={form.puertas} onChange={e => setForm({...form, puertas: e.target.value})} />
-          </div>
-          <div className="w-40">
-            <label className="block text-sm text-slate-600 mb-1">Cambio Baterías</label>
-            <input required type="date" className="w-full border p-2 rounded-md" value={form.fechaBaterias} onChange={e => setForm({...form, fechaBaterias: e.target.value})} />
-          </div>
-          <div className="w-48">
-            <label className="block text-sm text-slate-600 mb-1">Consorcio</label>
-            <select required className="w-full border p-2 rounded-md" value={form.consorcioId} onChange={e => setForm({...form, consorcioId: e.target.value})}>
-              <option value="">Seleccionar...</option>
-              {db.consorcios.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
-            </select>
-          </div>
-          <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition">
-            Guardar
-          </button>
-        </form>
-      )}
-
-      <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-        <table className="min-w-full divide-y divide-slate-200">
-          <thead className="bg-slate-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">ID</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Dirección</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Consorcio</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Puertas</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Acciones</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-slate-200 cursor-pointer">
-            {db.edificios.map(edificio => (
-              <tr 
-                key={edificio.id} 
-                onClick={() => setSelectedEdificioId(edificio.id)}
-                className={selectedEdificioId === edificio.id ? 'bg-blue-50' : 'hover:bg-slate-50'}
-              >
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-900">#{edificio.id}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-900 font-medium">{edificio.direccion}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
-                  {db.consorcios.find(c => c.id === edificio.consorcioId)?.nombre || 'Desconocido'}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">{edificio.puertas}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600">Ver Detalles</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+          <input
+            type="text"
+            className="block w-full pl-10 pr-3 py-2.5 border border-slate-300 rounded-md bg-slate-50 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+            placeholder="Buscar por nombre o dirección..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
       </div>
 
+      {/* TABLA RESPONSIVA: Contenedor con overflow-x-auto */}
+      <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-slate-200">
+            <thead className="bg-slate-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Nombre / Dirección</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Lectores</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase whitespace-nowrap">Stock</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-slate-200">
+              {edificiosFiltrados.map(edificio => {
+                const stockCount = db.llaveros.filter(ll => ll.edificioId === edificio.id && ll.estado === 'En Stock').length;
+                return (
+                  <tr 
+                    key={edificio.id} 
+                    onClick={() => setSelectedEdificioId(edificio.id)}
+                    className={`cursor-pointer transition-colors ${selectedEdificioId === edificio.id ? 'bg-blue-50' : 'hover:bg-slate-50'}`}
+                  >
+                    <td className="px-6 py-4">
+                      <div className="text-sm font-bold text-slate-900">{edificio.nombre}</div>
+                      <div className="text-xs text-slate-500">{edificio.direccion}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-slate-600">{edificio.lectores} uds.</div>
+                      {edificio.anticlon && <span className="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-bold">ANTICLON</span>}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`text-xs font-bold px-2 py-1 rounded-full ${stockCount > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                        {stockCount} llaveros
+                      </span>
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* FICHA TÉCNICA AMPLIADA CON TODOS LOS DATOS RESTAURADOS */}
       {selectedEdificio && (
-        <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200 mt-6 hidden md:block animate-fade-in-up">
-          <h3 className="text-lg font-semibold text-slate-800 mb-4 border-b pb-2">
-            Detalles - {selectedEdificio.direccion}
-          </h3>
-          <div className="grid grid-cols-2 gap-4 mb-6">
-            <p className="text-sm text-slate-600"><span className="font-semibold text-slate-800">Fecha de Baterías:</span> {selectedEdificio.fechaBaterias}</p>
-            <p className="text-sm text-slate-600"><span className="font-semibold text-slate-800">Llaveros en Stock:</span> {db.llaveros.filter(ll => ll.edificioId === selectedEdificio.id && ll.estado === 'En Stock').length}</p>
+        <div className="bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden animate-fade-in-up">
+          <div className="bg-slate-800 px-6 py-4 text-white flex items-center gap-3">
+            <Info className="w-5 h-5 text-blue-400" />
+            <h3 className="font-bold">Detalle del Edificio: {selectedEdificio.nombre}</h3>
+          </div>
+          
+          <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            {/* 1. Infraestructura */}
+            <div className="space-y-3 bg-slate-50 p-4 rounded-lg border border-slate-100">
+              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Infraestructura</h4>
+              <p className="text-sm text-slate-700 flex justify-between border-b border-slate-200 pb-1">
+                <span className="font-semibold">Dirección:</span> <span>{selectedEdificio.direccion}</span>
+              </p>
+              <p className="text-sm text-slate-700 flex justify-between border-b border-slate-200 pb-1">
+                <span className="font-semibold">Puertas de acceso:</span> <span>{selectedEdificio.puertas}</span>
+              </p>
+              <p className="text-sm text-slate-700 flex justify-between border-b border-slate-200 pb-1">
+                <span className="font-semibold">Lectores instalados:</span> 
+                <span>
+                  {selectedEdificio.lectores} 
+                  {selectedEdificio.anticlon ? <span className="ml-1 text-purple-600 font-medium">(Anticlon)</span> : <span className="ml-1 text-slate-500">(Estándar)</span>}
+                </span>
+              </p>
+              <p className="text-sm text-slate-700 flex justify-between pb-1">
+                <span className="font-semibold">Baterías renovadas:</span> <span>{selectedEdificio.fechaBaterias}</span>
+              </p>
+            </div>
+
+            {/* 2. Administración */}
+            <div className="space-y-3 bg-slate-50 p-4 rounded-lg border border-slate-100">
+              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Administración</h4>
+              <p className="text-sm text-slate-700 flex justify-between border-b border-slate-200 pb-1">
+                <span className="font-semibold">Empresa a cargo:</span> 
+                <span className="text-right ml-2">{selectedEdificio.adminNombre}</span>
+              </p>
+              <p className="text-sm text-slate-700 flex justify-between border-b border-slate-200 pb-1">
+                <span className="font-semibold">Contacto Email:</span> 
+                <a href={`mailto:${selectedEdificio.adminEmail}`} className="text-blue-600 hover:underline text-right ml-2 break-all">{selectedEdificio.adminEmail}</a>
+              </p>
+              <p className="text-sm text-slate-700 flex justify-between pb-1">
+                <span className="font-semibold">Consorcio Vinculado:</span> 
+                <span className="text-right ml-2">{db.consorcios.find(c => c.id === selectedEdificio.consorcioId)?.nombre || 'N/A'}</span>
+              </p>
+            </div>
+
+            {/* 3. Stock de Llaveros */}
+            <div className="bg-blue-50 p-4 rounded-lg border border-blue-100 flex flex-col">
+              <div className="flex items-center gap-2 mb-2 text-blue-800">
+                <PackageOpen className="w-4 h-4" />
+                <h4 className="text-xs font-bold uppercase tracking-wider">Inventario en Stock</h4>
+              </div>
+              <p className="text-2xl font-black text-blue-900">{stockEdificio.length} <span className="text-sm font-medium">unidades</span></p>
+              <div className="mt-3 flex flex-wrap gap-1 flex-1 content-start">
+                {stockEdificio.slice(0, 5).map(ll => (
+                  <span key={ll.codigoUnico} className="text-[10px] bg-white border border-blue-200 px-1.5 py-0.5 rounded text-blue-600 font-bold">
+                    #{ll.codigoUnico.slice(-4)}
+                  </span>
+                ))}
+                {stockEdificio.length > 5 && <span className="text-[10px] text-blue-400 font-medium py-0.5">+{stockEdificio.length - 5} más</span>}
+              </div>
+            </div>
+
           </div>
 
-          <h4 className="text-md font-semibold text-slate-700 mb-3">Historial de Servicio Técnico</h4>
-          {serviciosFiltrados.length === 0 ? (
-            <p className="text-sm text-slate-500 italic">No hay registros de servicio técnico para este edificio.</p>
-          ) : (
-            <ul className="divide-y divide-slate-100">
-              {serviciosFiltrados.map(srv => (
-                <li key={srv.id} className="py-3">
-                  <div className="flex justify-between">
-                    <div className="text-sm font-medium text-slate-900">{srv.tarea}</div>
-                    <div className="text-xs text-slate-500">{new Date(srv.fecha).toLocaleDateString()}</div>
-                  </div>
-                  <div className="text-sm text-slate-500">Técnico: {srv.nombreTecnico} | Puerta N°: {srv.numPuerta}</div>
-                  {srv.repuestos && <div className="text-xs mt-1 text-blue-600 bg-blue-50 inline-block px-2 py-1 rounded">Repuestos: {srv.repuestos}</div>}
-                </li>
-              ))}
-            </ul>
-          )}
+          {/* Observaciones (Ancho completo) */}
+          <div className="bg-amber-50 p-4 border-t border-amber-100 px-6">
+            <h4 className="text-xs font-bold text-amber-800 uppercase tracking-wider mb-2">Observaciones Generales</h4>
+            <p className="text-sm text-amber-900 whitespace-pre-wrap">{selectedEdificio.observaciones || 'Sin observaciones registradas.'}</p>
+          </div>
+
         </div>
       )}
     </div>

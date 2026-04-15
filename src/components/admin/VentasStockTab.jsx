@@ -1,211 +1,273 @@
 import React, { useState } from 'react';
+import { CheckCircle, Clock, Package, ScanLine, ArrowRight, History } from 'lucide-react';
 
 function VentasStockTab({ db, handlers }) {
-  const [selectedEdificioId, setSelectedEdificioId] = useState('');
-  const [ventaForm, setVentaForm] = useState({
-    llaveroId: '',
-    solicitudId: '',
-    monto: ''
-  });
+  const [ventaForm, setVentaForm] = useState({ llaveroId: '', solicitudId: '', monto: '' });
+  const [selectedSol, setSelectedSol] = useState(null); 
   const [mensaje, setMensaje] = useState('');
 
-  const edificioElegido = parseInt(selectedEdificioId);
-  
-  // Datos filtrados por edificio
-  const solicitudesFiltradas = db.solicitudes.filter(s => s.edificioId === edificioElegido);
-  const stockDisponible = db.llaveros.filter(ll => ll.edificioId === edificioElegido && ll.estado === 'En Stock');
-  const solicitudesAutorizadas = solicitudesFiltradas.filter(s => s.estado === 'Autorizado');
+  // 1. Enriquecer las solicitudes con datos del edificio
+  const solicitudesEnriquecidas = db.solicitudes.map(sol => {
+    const edificio = db.edificios.find(e => e.id === sol.edificioId);
+    return {
+      ...sol,
+      edificioNombre: edificio ? edificio.nombre : 'Desconocido',
+      edificioDireccion: edificio ? edificio.direccion : 'Desconocido'
+    };
+  }).sort((a, b) => b.id - a.id);
 
-  const handleAutorizar = (solicitudId) => {
-    handlers.handleUpdateSolicitudEstado(solicitudId, 'Autorizado');
+  // 2. Historial enriquecido (Siempre visible abajo)
+  const ventasHistorial = db.ventas.map(venta => {
+    const solicitud = solicitudesEnriquecidas.find(s => s.id === venta.solicitudId);
+    return {
+      ...venta,
+      solicitante: solicitud ? solicitud.nombreCompleto : 'Desconocido',
+      edificio: solicitud ? solicitud.edificioNombre : 'Desconocido',
+      ubicacion: solicitud ? `Piso ${solicitud.piso} - Dpto ${solicitud.depto}` : ''
+    };
+  }).sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+
+  const handleSelectSolicitud = (sol) => {
+    if (sol.estado !== 'Aprobada') return;
+    setSelectedSol(sol);
+    // Reseteamos el formulario al cambiar de solicitud
+    setVentaForm({ llaveroId: '', solicitudId: sol.id, monto: '' });
+    setMensaje('');
   };
+
+  // Stock disponible filtrado AUTOMÁTICAMENTE para el edificio de la solicitud
+  const stockDisponible = selectedSol 
+    ? db.llaveros.filter(ll => ll.edificioId === selectedSol.edificioId && ll.estado === 'En Stock')
+    : [];
 
   const handleVenta = (e) => {
     e.preventDefault();
-    if (!ventaForm.llaveroId || !ventaForm.solicitudId || !ventaForm.monto) return;
+    if (!ventaForm.llaveroId || !selectedSol || !ventaForm.monto) return;
 
+    const codigoEscaneado = ventaForm.llaveroId.trim();
+
+    // Validar que el código ingresado/seleccionado realmente exista en stock para ese edificio
+    const llaveroValido = stockDisponible.find(ll => ll.codigoUnico === codigoEscaneado);
+
+    if (!llaveroValido) {
+      setMensaje('❌ Error: El código ingresado no existe o no pertenece a este edificio.');
+      setTimeout(() => setMensaje(''), 4000);
+      return;
+    }
+
+    // Registrar Venta
     handlers.handleGenerarVenta({
-      llaveroId: ventaForm.llaveroId,
-      solicitudId: parseInt(ventaForm.solicitudId),
+      llaveroId: codigoEscaneado,
+      solicitudId: selectedSol.id,
       monto: parseFloat(ventaForm.monto)
     });
 
-    setMensaje('Venta registrada exitosamente.');
+    handlers.handleUpdateSolicitudEstado(selectedSol.id, 'Entregado');
+    setMensaje('✅ Venta registrada y llavero entregado exitosamente.');
+    setSelectedSol(null);
     setVentaForm({ llaveroId: '', solicitudId: '', monto: '' });
-    
-    setTimeout(() => setMensaje(''), 3000);
+    setTimeout(() => setMensaje(''), 4000);
   };
 
   return (
-    <div className="space-y-6">
-      <div className="bg-white p-5 rounded-lg shadow-sm border border-slate-200">
-        <label className="block text-sm font-semibold text-slate-800 mb-2">Seleccionar Edificio para Gestionar</label>
-        <select
-          className="w-full md:w-1/2 border border-slate-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500"
-          value={selectedEdificioId}
-          onChange={(e) => setSelectedEdificioId(e.target.value)}
-        >
-          <option value="">-- Elige un edificio --</option>
-          {db.edificios.map(ed => (
-            <option key={ed.id} value={ed.id}>{ed.direccion}</option>
-          ))}
-        </select>
+    <div className="space-y-8">
+      
+      {/* SECCIÓN SUPERIOR: Solicitudes (Izquierda) y Panel de Venta (Derecha) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        {/* PANEL IZQUIERDO: Lista de Solicitudes */}
+        <div className="lg:col-span-5 flex flex-col h-[500px]">
+          <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2 mb-4">
+            <Clock className="w-5 h-5 text-blue-500" />
+            Solicitudes Pendientes de Entrega
+          </h3>
+          
+          <div className="flex-1 overflow-y-auto pr-2 space-y-3">
+            {solicitudesEnriquecidas.map(sol => {
+              const isSelected = selectedSol?.id === sol.id;
+              return (
+                <div 
+                  key={sol.id}
+                  onClick={() => handleSelectSolicitud(sol)}
+                  className={`p-4 rounded-xl border-2 transition-all relative overflow-hidden ${
+                    isSelected ? 'border-blue-500 bg-blue-50 shadow-md' : 
+                    sol.estado === 'Aprobada' ? 'border-slate-200 bg-white hover:border-green-300 cursor-pointer' : 'opacity-60 grayscale cursor-not-allowed bg-slate-50 border-transparent'
+                  }`}
+                >
+                  <div className="flex justify-between items-start mb-1">
+                    <div>
+                      <h4 className="font-bold text-slate-900">{sol.nombreCompleto}</h4>
+                      <p className="text-xs font-semibold text-slate-600">{sol.edificioNombre}</p>
+                      <p className="text-xs text-slate-500">Piso {sol.piso} - Dpto {sol.depto}</p>
+                    </div>
+                    <span className={`text-[10px] font-black px-2 py-1 rounded-md uppercase ${
+                      sol.estado === 'Aprobada' ? 'bg-green-100 text-green-700' : 'bg-slate-200 text-slate-600'
+                    }`}>
+                      {sol.estado}
+                    </span>
+                  </div>
+                  {isSelected && <ArrowRight className="absolute right-3 bottom-3 w-5 h-5 text-blue-500 animate-pulse" />}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* PANEL DERECHO: Formulario de Venta (Aparece al seleccionar) */}
+        <div className="lg:col-span-7">
+          {!selectedSol ? (
+            <div className="h-full min-h-[400px] border-2 border-dashed border-slate-300 rounded-2xl flex flex-col items-center justify-center p-8 text-center bg-white">
+              <Package className="w-16 h-16 mb-4 text-slate-300" />
+              <p className="font-medium text-lg text-slate-500">Seleccione una solicitud <span className="text-green-600 font-bold">APROBADA</span><br/>para efectuar la entrega y cobro.</p>
+            </div>
+          ) : (
+            <div className="bg-white rounded-2xl shadow-xl border border-blue-100 overflow-hidden animate-fade-in-right">
+              <div className="bg-blue-600 p-6 text-white">
+                <h3 className="text-xl font-bold">Procesar Entrega</h3>
+                <p className="text-blue-100 text-sm mt-1">
+                  Entregando a: <strong>{selectedSol.nombreCompleto}</strong> (DNI: {selectedSol.dni})<br/>
+                  Destino: {selectedSol.edificioNombre} - {selectedSol.piso}{selectedSol.depto}
+                </p>
+              </div>
+
+              <div className="p-6 space-y-6">
+                
+                {/* 1. Selección visual de stock */}
+                <div>
+                  <h4 className="text-xs font-bold text-slate-400 uppercase mb-3 flex items-center gap-2">
+                    <Package className="w-4 h-4" /> Llaveros Físicos Disponibles (Haga click para elegir)
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {stockDisponible.length > 0 ? (
+                      stockDisponible.map(ll => (
+                        <button 
+                          key={ll.codigoUnico}
+                          type="button"
+                          onClick={() => setVentaForm({...ventaForm, llaveroId: ll.codigoUnico})}
+                          className={`px-3 py-2 rounded-lg text-xs font-bold border-2 transition-all ${
+                            ventaForm.llaveroId === ll.codigoUnico ? 'bg-blue-600 border-blue-600 text-white' : 'bg-white border-slate-200 text-slate-600 hover:border-blue-400'
+                          }`}
+                        >
+                          #{ll.codigoUnico}
+                        </button>
+                      ))
+                    ) : (
+                      <div className="w-full p-4 bg-red-50 text-red-600 rounded-lg text-sm font-bold border border-red-100">
+                        ⚠️ No hay llaveros en stock para este edificio.
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <form onSubmit={handleVenta} className="space-y-4 pt-4 border-t border-slate-100">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    
+                    {/* 2. Ingreso por texto / Lector de barras */}
+                    <div>
+                      <label className="block text-xs font-bold text-slate-500 mb-1">CÓDIGO DE LLAVERO (ESCANEAR O ESCRIBIR)</label>
+                      <div className="relative">
+                        <ScanLine className="absolute left-3 top-3 w-4 h-4 text-slate-400" />
+                        <input 
+                          required
+                          type="text"
+                          className="w-full pl-9 p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono focus:ring-2 focus:ring-blue-500 outline-none transition-colors focus:bg-white"
+                          value={ventaForm.llaveroId}
+                          onChange={e => setVentaForm({...ventaForm, llaveroId: e.target.value})}
+                          placeholder="Escanear o elegir arriba..."
+                        />
+                      </div>
+                    </div>
+
+                    {/* 3. Monto */}
+                    <div>
+                      <label className="block text-xs font-bold text-slate-500 mb-1">MONTO A COBRAR ($)</label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-2.5 font-bold text-slate-400">$</span>
+                        <input 
+                          required
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          className="w-full pl-8 p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm font-bold text-green-700 outline-none focus:ring-2 focus:ring-green-500 focus:bg-white"
+                          value={ventaForm.monto}
+                          onChange={e => setVentaForm({...ventaForm, monto: e.target.value})}
+                          placeholder="0.00"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <button 
+                    type="submit"
+                    disabled={!ventaForm.llaveroId || !ventaForm.monto || stockDisponible.length === 0}
+                    className="w-full mt-4 bg-green-600 hover:bg-green-700 disabled:bg-slate-300 text-white font-bold py-4 rounded-xl shadow-md transition-all active:scale-95"
+                  >
+                    FINALIZAR VENTA Y ENTREGAR
+                  </button>
+                </form>
+              </div>
+            </div>
+          )}
+          {mensaje && (
+            <div className={`mt-4 p-4 rounded-lg font-bold text-center border ${mensaje.includes('❌') ? 'bg-red-50 text-red-700 border-red-200' : 'bg-green-100 text-green-800 border-green-200'}`}>
+              {mensaje}
+            </div>
+          )}
+        </div>
       </div>
 
-      {edificioElegido ? (
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-          
-          {/* Panel Izquierdo: Solicitudes y Stock */}
-          <div className="space-y-6">
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
-              <h3 className="text-lg font-bold text-slate-800 mb-4">Solicitudes</h3>
-              {solicitudesFiltradas.length === 0 ? (
-                <p className="text-sm text-slate-500">No hay solicitudes para este edificio.</p>
-              ) : (
-                <ul className="divide-y divide-slate-100">
-                  {solicitudesFiltradas.map(sol => (
-                    <li key={sol.id} className="py-3 flex justify-between items-center">
-                      <div>
-                        <p className="text-sm font-semibold text-slate-800">{sol.solicitante} <span className="text-xs text-slate-500 ml-1">(Depto {sol.depto})</span></p>
-                        <p className={`text-xs mt-1 inline-block px-2 py-1 rounded font-medium ${sol.estado === 'Pendiente' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}`}>
-                          {sol.estado}
-                        </p>
-                      </div>
-                      {sol.estado === 'Pendiente' && (
-                        <button 
-                          onClick={() => handleAutorizar(sol.id)}
-                          className="text-xs bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded transition"
-                        >
-                          Autorizar
-                        </button>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
-              <h3 className="text-lg font-bold text-slate-800 mb-4">Stock Disponible</h3>
-              {stockDisponible.length === 0 ? (
-                <p className="text-sm text-red-500 font-medium">Sin stock para este edificio.</p>
-              ) : (
-                <div className="flex flex-wrap gap-2">
-                  {stockDisponible.map(ll => (
-                    <span key={ll.codigoUnico} className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold px-2.5 py-1 rounded">
-                      {ll.codigoUnico}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Panel Derecho: Venta y Historial */}
-          <div className="space-y-6">
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
-              <h3 className="text-lg font-bold text-slate-800 mb-4">Registrar Venta</h3>
-              
-              {mensaje && (
-                <div className="mb-4 bg-green-50 text-green-700 p-3 text-sm rounded-md border border-green-200">
-                  {mensaje}
-                </div>
-              )}
-
-              <form onSubmit={handleVenta} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Llavero a Vender</label>
-                  <select 
-                    required 
-                    className="w-full border border-slate-300 rounded-md p-2 text-sm"
-                    value={ventaForm.llaveroId}
-                    onChange={e => setVentaForm({...ventaForm, llaveroId: e.target.value})}
-                  >
-                    <option value="">-- Seleccionar Llavero --</option>
-                    {stockDisponible.map(ll => (
-                      <option key={ll.codigoUnico} value={ll.codigoUnico}>{ll.codigoUnico}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Solicitud Autorizada</label>
-                  <select 
-                    required 
-                    className="w-full border border-slate-300 rounded-md p-2 text-sm"
-                    value={ventaForm.solicitudId}
-                    onChange={e => setVentaForm({...ventaForm, solicitudId: e.target.value})}
-                  >
-                    <option value="">-- Seleccionar Solicitud --</option>
-                    {solicitudesAutorizadas.map(sol => (
-                      <option key={sol.id} value={sol.id}>{sol.solicitante} - Depto: {sol.depto}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Monto ($)</label>
-                  <input 
-                    type="number" 
-                    required 
-                    min="0"
-                    step="0.01"
-                    className="w-full border border-slate-300 rounded-md p-2 text-sm"
-                    value={ventaForm.monto}
-                    onChange={e => setVentaForm({...ventaForm, monto: e.target.value})}
-                  />
-                </div>
-
-                <button 
-                  type="submit"
-                  disabled={stockDisponible.length === 0 || solicitudesAutorizadas.length === 0}
-                  className="w-full bg-slate-900 text-white font-medium py-2 px-4 rounded-md hover:bg-slate-800 disabled:bg-slate-300 transition"
-                >
-                  Confirmar Venta
-                </button>
-                {(stockDisponible.length === 0 || solicitudesAutorizadas.length === 0) && (
-                  <p className="text-xs text-red-500 mt-2 text-center">Requiere stock y al menos una solicitud autorizada.</p>
-                )}
-              </form>
-            </div>
-            
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
-              <h3 className="text-lg font-bold text-slate-800 mb-4">Historial de Ventas</h3>
-              {db.ventas.length === 0 ? (
-                <p className="text-sm text-slate-500">No se han registrado ventas globales.</p>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-slate-200">
-                    <thead className="bg-slate-50">
-                      <tr>
-                        <th className="px-3 py-2 text-left text-xs font-medium text-slate-500">Fecha</th>
-                        <th className="px-3 py-2 text-left text-xs font-medium text-slate-500">Llavero</th>
-                        <th className="px-3 py-2 text-left text-xs font-medium text-slate-500">Solicitud ID</th>
-                        <th className="px-3 py-2 text-left text-xs font-medium text-slate-500">Precio</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-200">
-                      {/* Vemos todas las ventas para simplicidad */}
-                      {[...db.ventas].reverse().map(v => (
-                        <tr key={v.id}>
-                          <td className="px-3 py-2 text-xs text-slate-500 whitespace-nowrap">{new Date(v.fecha).toLocaleDateString()}</td>
-                          <td className="px-3 py-2 text-sm font-medium text-slate-800">{v.llaveroId}</td>
-                          <td className="px-3 py-2 text-sm text-slate-600">#{v.solicitudId}</td>
-                          <td className="px-3 py-2 text-sm text-green-600 font-semibold">${v.monto}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
-          </div>
+      {/* SECCIÓN INFERIOR: Historial Global de Ventas (SIEMPRE VISIBLE) */}
+      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mt-8">
+        <div className="p-4 border-b border-slate-100 bg-slate-50 flex items-center gap-2">
+          <History className="w-5 h-5 text-slate-500" />
+          <h3 className="font-bold text-slate-700">Historial Global de Ventas y Entregas</h3>
         </div>
-      ) : (
-        <div className="text-center py-12 bg-white rounded-lg shadow-sm border border-slate-200 border-dashed">
-          <p className="text-slate-500 text-sm">Selecciona un edificio en la parte superior para comenzar a gestionar sus ventas y stock.</p>
+        
+        {/* Envoltorio overflow-x-auto para responsividad en móviles */}
+        <div className="overflow-x-auto">
+          {ventasHistorial.length === 0 ? (
+            <div className="text-center py-8 text-slate-500 italic">
+              No hay ventas registradas aún.
+            </div>
+          ) : (
+            <table className="min-w-full divide-y divide-slate-200">
+              <thead className="bg-white">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Fecha</th>
+                  <th className="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Llavero Entregado</th>
+                  <th className="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Destinatario</th>
+                  <th className="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Inmueble</th>
+                  <th className="px-6 py-3 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">Cobro</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-slate-100">
+                {ventasHistorial.map(venta => (
+                  <tr key={venta.id} className="hover:bg-slate-50 transition-colors">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                      {new Date(venta.fecha).toLocaleDateString('es-AR', {
+                        year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                      })}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-mono font-bold text-blue-600">
+                      #{venta.llaveroId}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">
+                      {venta.solicitante}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                      {venta.edificio} <span className="text-xs text-slate-400 block">{venta.ubicacion}</span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-green-700 text-right">
+                      ${venta.monto.toFixed(2)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
-      )}
+      </div>
+      
     </div>
   );
 }
