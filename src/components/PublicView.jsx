@@ -56,10 +56,9 @@ function PublicView({ db, handlers }) {
   return (
     <div className="flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-slate-50 min-h-screen">
       <div className="text-center mb-10">
-        <Key className="mx-auto h-16 w-16 text-orange-600 mb-4" />
+        <img src="/logo.png" alt="INTEK" className="mx-auto h-16 md:h-24 object-contain mb-6" />
         <h1 className="text-4xl tracking-tight font-extrabold text-slate-900 sm:text-5xl md:text-6xl">
-          <span className="block">Bienvenido a</span>
-          <span className="block text-orange-600">Gestión INTEK</span>
+          <span className="block">Gestión de Accesos</span>
         </h1>
         <p className="mt-3 max-w-md mx-auto text-base text-slate-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
           Solicita tu llavero digital de manera rápida y segura para tu edificio.
