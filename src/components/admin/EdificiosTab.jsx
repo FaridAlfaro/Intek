@@ -59,6 +59,73 @@ function EdificiosTab({ db, handlers }) {
         </div>
       </div>
 
+      {/* Formulario Nuevo Edificio */}
+      {showForm && (
+        <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200 animate-fade-in-up">
+          <h3 className="font-bold text-slate-800 mb-4 border-b pb-2">Crear Nuevo Edificio</h3>
+          <form 
+            onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.target);
+              handlers.handleCreateEdificio({
+                nombre: formData.get('nombre'),
+                direccion: formData.get('direccion'),
+                puertas: parseInt(formData.get('puertas')),
+                lectores: parseInt(formData.get('lectores')),
+                anticlon: formData.get('anticlon') === 'on',
+                consorcioId: 101, // Por defecto para simplificar
+                fechaBaterias: formData.get('fechaBaterias'),
+                observaciones: formData.get('observaciones'),
+                adminNombre: formData.get('adminNombre'),
+                adminEmail: formData.get('adminEmail')
+              });
+              setShowForm(false);
+            }} 
+            className="grid grid-cols-1 sm:grid-cols-2 gap-4"
+          >
+            <div>
+              <label className="block text-xs font-medium text-slate-700 mb-1">Nombre</label>
+              <input name="nombre" required className="w-full border border-slate-300 rounded p-2 text-sm focus:ring-orange-500 focus:border-orange-500" />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-slate-700 mb-1">Dirección</label>
+              <input name="direccion" required className="w-full border border-slate-300 rounded p-2 text-sm focus:ring-orange-500 focus:border-orange-500" />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-slate-700 mb-1">Puertas</label>
+              <input type="number" name="puertas" required className="w-full border border-slate-300 rounded p-2 text-sm focus:ring-orange-500 focus:border-orange-500" />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-slate-700 mb-1">Lectores</label>
+              <input type="number" name="lectores" required className="w-full border border-slate-300 rounded p-2 text-sm focus:ring-orange-500 focus:border-orange-500" />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-slate-700 mb-1">Empresa Admin</label>
+              <input name="adminNombre" required className="w-full border border-slate-300 rounded p-2 text-sm focus:ring-orange-500 focus:border-orange-500" />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-slate-700 mb-1">Email Admin</label>
+              <input type="email" name="adminEmail" required className="w-full border border-slate-300 rounded p-2 text-sm focus:ring-orange-500 focus:border-orange-500" />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-slate-700 mb-1">Fecha Baterías</label>
+              <input type="date" name="fechaBaterias" required className="w-full border border-slate-300 rounded p-2 text-sm focus:ring-orange-500 focus:border-orange-500" />
+            </div>
+            <div className="flex items-center mt-6">
+              <input type="checkbox" name="anticlon" id="anticlon" className="rounded border-slate-300 text-orange-600 focus:ring-orange-500" />
+              <label htmlFor="anticlon" className="ml-2 text-sm text-slate-700">Sistema Anticlon</label>
+            </div>
+            <div className="sm:col-span-2">
+              <label className="block text-xs font-medium text-slate-700 mb-1">Observaciones</label>
+              <textarea name="observaciones" rows="2" className="w-full border border-slate-300 rounded p-2 text-sm focus:ring-orange-500 focus:border-orange-500"></textarea>
+            </div>
+            <div className="sm:col-span-2 pt-2 text-right">
+              <button type="submit" className="bg-orange-600 text-white px-6 py-2 rounded-md hover:bg-orange-700 font-medium">Guardar Edificio</button>
+            </div>
+          </form>
+        </div>
+      )}
+
       {/* TABLA RESPONSIVA: Contenedor con overflow-x-auto */}
       <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
         <div className="overflow-x-auto">
